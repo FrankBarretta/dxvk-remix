@@ -51,6 +51,8 @@ namespace dxvk {
     VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT extShaderDemoteToHelperInvocation;
     VkPhysicalDeviceTransformFeedbackFeaturesEXT              extTransformFeedback;
     VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT         extVertexAttributeDivisor;
+    VkPhysicalDeviceHostQueryResetFeatures                    extHostQueryReset;
+    VkPhysicalDeviceShaderDrawParametersFeatures              shaderDrawParameters;
   	VkPhysicalDeviceRayQueryFeaturesKHR	                      khrRayQueryFeatures;
     VkPhysicalDeviceRayTracingPipelineFeaturesKHR	            khrDeviceRayTracingPipelineFeatures;
   	VkPhysicalDeviceAccelerationStructureFeaturesKHR          khrAccelerationStructureFeatures;

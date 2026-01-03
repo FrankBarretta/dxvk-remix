@@ -20,7 +20,21 @@
   DEALINGS IN THE SOFTWARE.
 #>
 
-.   ".\build_common.ps1"
+. ".\build_common.ps1"
+
+# --- Force UTF-8 for Python + console output (helps shader build scripts) ---
+$env:PYTHONUTF8 = "1"          # Python uses UTF-8 for stdio
+$env:PYTHONIOENCODING = "utf-8" # Force UTF-8 for pipes/subprocess I/O
+$env:LC_ALL = "C.UTF-8"
+$env:LANG   = "C.UTF-8"
+$env:NINJA_STATUS="[%f/%t %p] "
+
+# Make current console use UTF-8 (Windows)
+chcp 65001 | Out-Null
+
+# Optional: make .NET output UTF-8 too
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
+[Console]::InputEncoding  = [System.Text.UTF8Encoding]::new()
 
 $BuildFlavours = @("debug","debugoptimized","release")
 $BuildSubDirs = @("_Comp64Debug","_Comp64DebugOptimized","_Comp64Release")

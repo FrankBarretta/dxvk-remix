@@ -494,4 +494,5 @@ dxvk_lib = static_library('dxvk', dxvk_src, dxvk_version, [generated_dxvk_shader
 
 dxvk_dep = declare_dependency(
   link_with           : [ dxvk_lib ],
+  dependencies        : [ usd_dep ],
   include_directories : [ dxvk_include_path ])

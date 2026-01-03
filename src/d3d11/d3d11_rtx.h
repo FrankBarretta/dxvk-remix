@@ -1,6 +1,5 @@
 #pragma once
 
-#include "d3d11_device.h"
 #include "../dxvk/dxvk_buffer.h"
 
 namespace dxvk {

@@ -119,7 +119,7 @@ function PerformBuild {
 
 	if (!$ConfigureOnly) {
 		Push-Location $BuildDir
-			& meson compile -v 
+			& meson compile -v --ninja-args="-v" 
 
 			if ($InstallTags -and $InstallTags.Count -gt 0) {
 				# join array into comma-separated list

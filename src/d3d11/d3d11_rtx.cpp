@@ -30,7 +30,10 @@ namespace dxvk {
     stagingDesc.ByteWidth = size;
 
     Com<ID3D11Buffer> stagingBuffer;
-    HRESULT hr = ctx->GetDevice()->CreateBuffer(&stagingDesc, nullptr, &stagingBuffer);
+    ID3D11Device* pDevice = nullptr;
+    ctx->GetDevice(&pDevice);
+    HRESULT hr = pDevice->CreateBuffer(&stagingDesc, nullptr, &stagingBuffer);
+    pDevice->Release();
     if (FAILED(hr)) {
       Logger::err("D3D11Rtx: Failed to create staging buffer");
       return {};
@@ -83,7 +86,7 @@ namespace dxvk {
     INT  BaseVertexLocation) {
       
       const auto& state = pContext->m_state;
-      if (!state.ia.inputLayout) return;
+      if (state.ia.inputLayout.ptr() == nullptr) return;
 
       // Find POSITION attribute
       const auto& elements = state.ia.inputLayout->GetElementDescs();
@@ -102,10 +105,10 @@ namespace dxvk {
       const auto& attrib = attributes[positionIdx];
       const auto& binding = state.ia.vertexBuffers[attrib.binding];
       
-      if (!binding.buffer) return;
+      if (binding.buffer.ptr() == nullptr) return;
 
       // Read Index Buffer
-      if (!state.ia.indexBuffer.buffer) return;
+      if (state.ia.indexBuffer.buffer.ptr() == nullptr) return;
       
       UINT indexSize = state.ia.indexBuffer.format == DXGI_FORMAT_R32_UINT ? 4 : 2;
       UINT indexOffset = state.ia.indexBuffer.offset + StartIndexLocation * indexSize;

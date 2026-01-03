@@ -1084,7 +1084,6 @@ namespace dxvk {
             D3D11Buffer*                pResource) = 0;
 
   protected:
-    D3D11ContextState         m_state;
   };
   
 }

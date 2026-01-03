@@ -337,9 +337,9 @@ namespace dxvk {
         cSync.acquire, cSync.present);
 
       if (cHud != nullptr && !cFrameId)
-        cHud->update();
+        cHud->update(0); // TODO: Pass correct present count if available, or 0 for now
 
-      m_device->presentImage(m_presenter, &m_presentStatus);
+      m_device->presentImage(cFrameId, false, 0, m_presenter, &m_presentStatus);
     });
 
     pContext->FlushCsChunk();
