@@ -17,7 +17,8 @@ namespace dxvk {
             uint32_t              numAttributes,
       const DxvkVertexAttribute*  pAttributes,
             uint32_t              numBindings,
-      const DxvkVertexBinding*    pBindings);
+      const DxvkVertexBinding*    pBindings,
+      const D3D11_INPUT_ELEMENT_DESC* pElementDescs);
     
     ~D3D11InputLayout();
     
@@ -34,11 +35,29 @@ namespace dxvk {
     D3D10InputLayout* GetD3D10Iface() {
       return &m_d3d10;
     }
+
+    const std::vector<DxvkVertexAttribute>& GetAttributes() const {
+      return m_attributes;
+    }
+
+    const std::vector<DxvkVertexBinding>& GetBindings() const {
+      return m_bindings;
+    }
+
+    struct ElementDesc {
+      std::string SemanticName;
+      UINT        SemanticIndex;
+    };
+
+    const std::vector<ElementDesc>& GetElementDescs() const {
+      return m_elementDescs;
+    }
     
   private:
     
     std::vector<DxvkVertexAttribute> m_attributes;
     std::vector<DxvkVertexBinding>   m_bindings;
+    std::vector<ElementDesc>         m_elementDescs;
 
     D3D10InputLayout m_d3d10;
     

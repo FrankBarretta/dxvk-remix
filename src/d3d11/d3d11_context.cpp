@@ -1104,6 +1104,10 @@ namespace dxvk {
           UINT            StartVertexLocation) {
     D3D10DeviceLock lock = LockContext();
 
+    if (m_parent->GetRtx()) {
+      m_parent->GetRtx()->Draw(VertexCount, StartVertexLocation);
+    }
+
     EmitCs([=] (DxvkContext* ctx) {
       ctx->draw(
         VertexCount, 1,
@@ -1118,6 +1122,10 @@ namespace dxvk {
           INT             BaseVertexLocation) {
     D3D10DeviceLock lock = LockContext();
     
+    if (m_parent->GetRtx()) {
+      m_parent->GetRtx()->DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
+    }
+
     EmitCs([=] (DxvkContext* ctx) {
       ctx->drawIndexed(
         IndexCount, 1,
@@ -1134,6 +1142,10 @@ namespace dxvk {
           UINT            StartInstanceLocation) {
     D3D10DeviceLock lock = LockContext();
     
+    if (m_parent->GetRtx()) {
+      m_parent->GetRtx()->DrawInstanced(VertexCountPerInstance, InstanceCount, StartVertexLocation, StartInstanceLocation);
+    }
+
     EmitCs([=] (DxvkContext* ctx) {
       ctx->draw(
         VertexCountPerInstance,
@@ -1152,6 +1164,10 @@ namespace dxvk {
           UINT            StartInstanceLocation) {
     D3D10DeviceLock lock = LockContext();
     
+    if (m_parent->GetRtx()) {
+      m_parent->GetRtx()->DrawIndexedInstanced(IndexCountPerInstance, InstanceCount, StartIndexLocation, BaseVertexLocation, StartInstanceLocation);
+    }
+
     EmitCs([=] (DxvkContext* ctx) {
       ctx->drawIndexed(
         IndexCountPerInstance,

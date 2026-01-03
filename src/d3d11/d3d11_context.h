@@ -22,6 +22,7 @@ namespace dxvk {
     friend class D3D11DeviceContextExt;
     // Needed in order to call EmitCs for pushing markers
     friend class D3D11UserDefinedAnnotation;
+    friend struct D3D11Rtx;
 
     constexpr static VkDeviceSize StagingBufferSize = 4ull << 20;
   public:
@@ -1082,6 +1083,8 @@ namespace dxvk {
     virtual void TrackBufferSequenceNumber(
             D3D11Buffer*                pResource) = 0;
 
+  protected:
+    D3D11ContextState         m_state;
   };
   
 }

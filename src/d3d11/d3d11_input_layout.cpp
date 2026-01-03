@@ -8,14 +8,19 @@ namespace dxvk {
           uint32_t              numAttributes,
     const DxvkVertexAttribute*  pAttributes,
           uint32_t              numBindings,
-    const DxvkVertexBinding*    pBindings)
+    const DxvkVertexBinding*    pBindings,
+    const D3D11_INPUT_ELEMENT_DESC* pElementDescs)
   : D3D11DeviceChild<ID3D11InputLayout>(pDevice),
     m_d3d10(this) {
     m_attributes.resize(numAttributes);
     m_bindings.resize(numBindings);
+    m_elementDescs.resize(numAttributes);
     
-    for (uint32_t i = 0; i < numAttributes; i++)
+    for (uint32_t i = 0; i < numAttributes; i++) {
       m_attributes.at(i) = pAttributes[i];
+      m_elementDescs.at(i).SemanticName = pElementDescs[i].SemanticName;
+      m_elementDescs.at(i).SemanticIndex = pElementDescs[i].SemanticIndex;
+    }
     
     for (uint32_t i = 0; i < numBindings; i++)
       m_bindings.at(i) = pBindings[i];

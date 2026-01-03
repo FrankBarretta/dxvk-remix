@@ -40,7 +40,8 @@ namespace dxvk {
     m_dxvkAdapter   (m_dxvkDevice->adapter()),
     m_d3d11Formats  (m_dxvkAdapter),
     m_d3d11Options  (m_dxvkDevice->instance()->config(), m_dxvkDevice),
-    m_dxbcOptions   (m_dxvkDevice, m_d3d11Options) {
+    m_dxbcOptions   (m_dxvkDevice, m_d3d11Options),
+    m_rtx           (this) {
     m_initializer = new D3D11Initializer(this);
     m_context     = new D3D11ImmediateContext(this, m_dxvkDevice);
     m_d3d10Device = new D3D10Device(this, m_context.ptr());
@@ -603,6 +604,7 @@ namespace dxvk {
       
       std::array<DxvkVertexAttribute, D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT> attrList;
       std::array<DxvkVertexBinding,   D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT> bindList;
+      std::array<D3D11_INPUT_ELEMENT_DESC, D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT> elemList;
       
       for (uint32_t i = 0; i < NumElements; i++) {
         const DxbcSgnEntry* entry = inputSignature->find(
@@ -645,6 +647,7 @@ namespace dxvk {
           return E_INVALIDARG;
 
         attrList.at(i) = attrib;
+        elemList.at(i) = pInputElementDescs[i];
         
         // Create vertex input binding description. The
         // stride is dynamic state in D3D11 and will be
@@ -687,6 +690,7 @@ namespace dxvk {
       // out attributes and bindings not used by the shader
       uint32_t attrCount = CompactSparseList(attrList.data(), attrMask);
       uint32_t bindCount = CompactSparseList(bindList.data(), bindMask);
+      uint32_t elemCount = CompactSparseList(elemList.data(), attrMask);
 
       // Check if there are any semantics defined in the
       // shader that are not included in the current input
@@ -711,7 +715,8 @@ namespace dxvk {
         *ppInputLayout = ref(
           new D3D11InputLayout(this,
             attrCount, attrList.data(),
-            bindCount, bindList.data()));
+            bindCount, bindList.data(),
+            elemList.data()));
       }
       
       return S_OK;

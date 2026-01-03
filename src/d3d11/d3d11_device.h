@@ -23,6 +23,7 @@
 #include "d3d11_shader.h"
 #include "d3d11_state.h"
 #include "d3d11_util.h"
+#include "d3d11_rtx.h"
 
 namespace dxvk {
   class DxgiAdapter;
@@ -389,6 +390,10 @@ namespace dxvk {
     Rc<DxvkDevice> GetDXVKDevice() {
       return m_dxvkDevice;
     }
+
+    D3D11Rtx* GetRtx() {
+      return &m_rtx;
+    }
     
     void FlushInitContext();
     
@@ -449,6 +454,7 @@ namespace dxvk {
     D3D11Initializer*               m_initializer = nullptr;
     D3D10Device*                    m_d3d10Device = nullptr;
     Com<D3D11ImmediateContext, false> m_context;
+    D3D11Rtx                        m_rtx;
 
     D3D11StateObjectSet<D3D11BlendState>        m_bsStateObjects;
     D3D11StateObjectSet<D3D11DepthStencilState> m_dsStateObjects;
