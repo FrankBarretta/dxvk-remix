@@ -23,15 +23,18 @@ namespace dxvk {
 
 extern "C" {
   DLLEXPORT HRESULT __stdcall CreateDXGIFactory2(UINT Flags, REFIID riid, void **ppFactory) {
+    dxvk::Logger::info("Entry: CreateDXGIFactory2");
     dxvk::Logger::warn("CreateDXGIFactory2: Ignoring flags");
     return dxvk::createDxgiFactory(Flags, riid, ppFactory);
   }
 
   DLLEXPORT HRESULT __stdcall CreateDXGIFactory1(REFIID riid, void **ppFactory) {
+    dxvk::Logger::info("Entry: CreateDXGIFactory1");
     return dxvk::createDxgiFactory(0, riid, ppFactory);
   }
   
   DLLEXPORT HRESULT __stdcall CreateDXGIFactory(REFIID riid, void **ppFactory) {
+    dxvk::Logger::info("Entry: CreateDXGIFactory");
     return dxvk::createDxgiFactory(0, riid, ppFactory);
   }
 

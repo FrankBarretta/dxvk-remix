@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cstring>
+#include <fstream>
 
 #include "../dxgi/dxgi_monitor.h"
 #include "../dxgi/dxgi_swapchain.h"
@@ -1906,17 +1907,44 @@ namespace dxvk {
     const Rc<DxvkInstance>& instance,
     const Rc<DxvkAdapter>&  adapter,
           D3D_FEATURE_LEVEL featureLevel) {
-    if (featureLevel > GetMaxFeatureLevel(instance))
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "CheckFeatureLevelSupport: Checking " << featureLevel << std::endl;
+    }
+
+    if (featureLevel > GetMaxFeatureLevel(instance)) {
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "CheckFeatureLevelSupport: Feature level too high" << std::endl;
+      }
       return false;
+    }
     
     // Check whether all features are supported
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "CheckFeatureLevelSupport: Getting device features..." << std::endl;
+    }
     const DxvkDeviceFeatures features
       = GetDeviceFeatures(adapter, featureLevel);
     
-    if (!adapter->checkFeatureSupport(features))
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "CheckFeatureLevelSupport: Checking feature support in adapter..." << std::endl;
+    }
+    if (!adapter->checkFeatureSupport(features)) {
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "CheckFeatureLevelSupport: Adapter does not support features" << std::endl;
+      }
       return false;
+    }
     
     // TODO also check for required limits
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "CheckFeatureLevelSupport: Supported!" << std::endl;
+    }
     return true;
   }
   
@@ -3429,8 +3457,23 @@ namespace dxvk {
 
 
   Rc<DxvkDevice> D3D11DXGIDevice::CreateDevice(D3D_FEATURE_LEVEL FeatureLevel) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11DXGIDevice::CreateDevice: Getting device features..." << std::endl;
+    }
     DxvkDeviceFeatures deviceFeatures = D3D11Device::GetDeviceFeatures(m_dxvkAdapter, FeatureLevel);
-    return m_dxvkAdapter->createDevice(m_dxvkInstance, deviceFeatures);
+    
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11DXGIDevice::CreateDevice: Creating Vulkan device..." << std::endl;
+    }
+    auto device = m_dxvkAdapter->createDevice(m_dxvkInstance, deviceFeatures);
+    
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11DXGIDevice::CreateDevice: Vulkan device created." << std::endl;
+    }
+    return device;
   }
 
 }

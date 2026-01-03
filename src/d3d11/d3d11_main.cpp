@@ -1,15 +1,36 @@
 #include <array>
 
+// NV-DXVK start: RTX FileSystem management
+#include "../util/util_env.h"
+#include "../util/util_filesys.h"
+#include "../util/util_once.h"
+// NV-DXVK end
+
 #include "../dxgi/dxgi_adapter.h"
 
 #include "../dxvk/dxvk_instance.h"
+#include "../dxvk/rtx_render/rtx_options.h"
 
 #include "d3d11_device.h"
 #include "d3d11_enums.h"
 #include "d3d11_interop.h"
 
+#include <windows.h>
+
 namespace dxvk {
   Logger Logger::s_instance("d3d11.log");
+
+  static void InitD3D11Logging() {
+    ONCE(
+      Logger::info("InitD3D11Logging called. Setting up RTX FileSys...");
+      const auto exePath = env::getExePath();
+      const auto exeDir = std::filesystem::path(exePath).parent_path();
+      util::RtxFileSys::init(exeDir.string());
+      Logger::info("RTX FileSys initialized. Switching to RTX Log...");
+      // Logger::initRtxLog();
+      util::RtxFileSys::print();
+    );
+  }
 }
   
 extern "C" {
@@ -22,6 +43,15 @@ extern "C" {
     const D3D_FEATURE_LEVEL*  pFeatureLevels,
           UINT                FeatureLevels,
           ID3D11Device**      ppDevice) {
+    
+    // Direct debug file to verify execution
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "Entry: D3D11CoreCreateDevice" << std::endl;
+    }
+
+    Logger::info("Entry: D3D11CoreCreateDevice");
+    InitD3D11Logging();
     InitReturnPtr(ppDevice);
 
     Rc<DxvkAdapter>  dxvkAdapter;
@@ -31,10 +61,73 @@ extern "C" {
     
     // Try to find the corresponding Vulkan device for the DXGI adapter
     if (SUCCEEDED(pAdapter->QueryInterface(__uuidof(IDXGIDXVKAdapter), reinterpret_cast<void**>(&dxgiVkAdapter)))) {
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "Found DXVK Adapter" << std::endl;
+      }
       dxvkAdapter  = dxgiVkAdapter->GetDXVKAdapter();
       dxvkInstance = dxgiVkAdapter->GetDXVKInstance();
+      
+      // Initialize RTX Options for d3d11.dll
+      static bool s_rtxInitialized = false;
+      if (!s_rtxInitialized) {
+        s_rtxInitialized = true;
+        Logger::info("D3D11: Initializing RTX Options...");
+        {
+          std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+          debugFile << "Initializing RTX Options..." << std::endl;
+        }
+
+        // Add quality.conf layer
+        Logger::info("D3D11: Adding quality.conf layer...");
+        RtxOptionImpl::addRtxOptionLayer("quality.conf", (uint32_t) RtxOptionLayer::SystemLayerPriority::Quality, true, 1.0f, 0.1f);
+        
+        // Add user.conf layer
+        Logger::info("D3D11: Adding user.conf layer...");
+        RtxOptionImpl::addRtxOptionLayer("user.conf", (uint32_t) RtxOptionLayer::SystemLayerPriority::USER, true, 1.0f, 0.1f);
+        
+        // We need to set startup options!
+        Logger::info("D3D11: Setting startup config...");
+        RtxOptionManager::setStartupConfig(dxvkInstance->config());
+        
+        Logger::info("D3D11: Initializing RTX Options (reading configs)...");
+        {
+          std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+          debugFile << "Calling initializeRtxOptions..." << std::endl;
+        }
+        RtxOptionManager::initializeRtxOptions();
+        
+        // Add layers to manager
+        Logger::info("D3D11: Adding layers to manager...");
+        for (const auto& [unusedLayerKey, optionLayerPtr] : RtxOptionImpl::getRtxOptionLayerMap()) {
+          RtxOptionManager::addRtxOptionLayer(*optionLayerPtr);
+        }
+
+        // Finally create the RtxOptions instance
+        Logger::info("D3D11: Creating RtxOptions instance...");
+        {
+          std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+          debugFile << "Calling RtxOptions::Create..." << std::endl;
+        }
+        RtxOptions::Create(dxvkInstance->config());
+        
+        Logger::info("D3D11: RTX Options initialized.");
+        {
+          std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+          debugFile << "RTX Options initialized." << std::endl;
+        }
+      } else {
+        {
+          std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+          debugFile << "RTX Options already initialized." << std::endl;
+        }
+      }
     } else {
       Logger::warn("D3D11CoreCreateDevice: Adapter is not a DXVK adapter");
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "Adapter is not a DXVK adapter" << std::endl;
+      }
       DXGI_ADAPTER_DESC desc;
       pAdapter->GetDesc(&desc);
 
@@ -64,19 +157,44 @@ extern "C" {
       FeatureLevels  = defaultFeatureLevels.size();
     }
     
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "Probing feature levels..." << std::endl;
+    }
+
     // Find the highest feature level supported by the device.
     // This works because the feature level array is ordered.
     UINT flId;
 
     for (flId = 0 ; flId < FeatureLevels; flId++) {
       Logger::info(str::format("D3D11CoreCreateDevice: Probing ", pFeatureLevels[flId]));
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "Probing " << pFeatureLevels[flId] << std::endl;
+      }
       
-      if (D3D11Device::CheckFeatureLevelSupport(dxvkInstance, dxvkAdapter, pFeatureLevels[flId]))
+      bool supported = D3D11Device::CheckFeatureLevelSupport(dxvkInstance, dxvkAdapter, pFeatureLevels[flId]);
+      
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "Probing result for " << pFeatureLevels[flId] << ": " << (supported ? "Supported" : "Not Supported") << std::endl;
+      }
+
+      if (supported)
         break;
     }
     
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "Probing finished. Selected index: " << flId << std::endl;
+    }
+
     if (flId == FeatureLevels) {
       Logger::err("D3D11CoreCreateDevice: Requested feature level not supported");
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "Requested feature level not supported" << std::endl;
+      }
       return E_INVALIDARG;
     }
     
@@ -85,14 +203,28 @@ extern "C" {
     
     try {
       Logger::info(str::format("D3D11CoreCreateDevice: Using feature level ", fl));
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "Creating D3D11DXGIDevice with feature level " << fl << std::endl;
+      }
+
       Com<D3D11DXGIDevice> device = new D3D11DXGIDevice(
         pAdapter, dxvkInstance, dxvkAdapter, fl, Flags);
       
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "D3D11DXGIDevice created. Querying interface..." << std::endl;
+      }
+
       return device->QueryInterface(
         __uuidof(ID3D11Device),
         reinterpret_cast<void**>(ppDevice));
     } catch (const DxvkError& e) {
       Logger::err("D3D11CoreCreateDevice: Failed to create D3D11 device");
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "Failed to create D3D11 device: " << e.message() << std::endl;
+      }
       return E_FAIL;
     }
   }
@@ -111,6 +243,7 @@ extern "C" {
           ID3D11Device**        ppDevice,
           D3D_FEATURE_LEVEL*    pFeatureLevel,
           ID3D11DeviceContext** ppImmediateContext) {
+    InitD3D11Logging();
     InitReturnPtr(ppDevice);
     InitReturnPtr(ppSwapChain);
     InitReturnPtr(ppImmediateContext);
@@ -214,6 +347,7 @@ extern "C" {
           ID3D11Device**        ppDevice,
           D3D_FEATURE_LEVEL*    pFeatureLevel,
           ID3D11DeviceContext** ppImmediateContext) {
+    Logger::info("Entry: D3D11CreateDevice");
     return D3D11InternalCreateDeviceAndSwapChain(
       pAdapter, DriverType, Software, Flags,
       pFeatureLevels, FeatureLevels, SDKVersion,
@@ -235,6 +369,7 @@ extern "C" {
           ID3D11Device**        ppDevice,
           D3D_FEATURE_LEVEL*    pFeatureLevel,
           ID3D11DeviceContext** ppImmediateContext) {
+    Logger::info("Entry: D3D11CreateDeviceAndSwapChain");
     return D3D11InternalCreateDeviceAndSwapChain(
       pAdapter, DriverType, Software, Flags,
       pFeatureLevels, FeatureLevels, SDKVersion,
@@ -254,6 +389,7 @@ extern "C" {
           ID3D11Device**        ppDevice,
           ID3D11DeviceContext** ppImmediateContext,
           D3D_FEATURE_LEVEL*    pChosenFeatureLevel) {
+    InitD3D11Logging();
     static bool s_errorShown = false;
 
     if (!std::exchange(s_errorShown, true))
