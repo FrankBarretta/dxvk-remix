@@ -806,6 +806,25 @@ if dxvk_is_ninja
       endif
     endif
 
+    if get_option('enable_dxgi')
+      if t != '_output'
+        meson.add_install_script(
+          join_paths(global_src_root_norm, 'scripts-common/install_file_in_dir.bat'),
+          join_paths(current_build_dir_norm, 'src/dxgi', 'dxgi.dll'), output_path,
+          install_tag: target_suffix
+        )
+      endif
+
+      if requires_pdb
+        # ensure we copy everything to these special targets, the PDB is important!
+        meson.add_install_script(
+          join_paths(global_src_root_norm, 'scripts-common/install_file_in_dir.bat'),
+          join_paths(current_build_dir_norm, 'src/dxgi', 'dxgi.*'), output_path,
+          install_tag: target_suffix
+        )
+      endif
+    endif
+
   endforeach
 
   # generate VS project files for ninja
