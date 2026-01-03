@@ -824,15 +824,15 @@ namespace dxvk {
 
     VkDevice device = VK_NULL_HANDLE;
     
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "DxvkAdapter::createDevice: Calling vkCreateDevice..." << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "DxvkAdapter::createDevice: Calling vkCreateDevice..." << std::endl;
+//     }
     VkResult vr = m_vki->vkCreateDevice(m_handle, &info, nullptr, &device);
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "DxvkAdapter::createDevice: vkCreateDevice returned " << vr << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "DxvkAdapter::createDevice: vkCreateDevice returned " << vr << std::endl;
+//     }
 
     if (vr != VK_SUCCESS && enableCudaInterop) {
       // Enabling certain Vulkan extensions can cause device creation to fail on
@@ -853,15 +853,15 @@ namespace dxvk {
       info.enabledExtensionCount      = extensionNameList.count();
       info.ppEnabledExtensionNames    = extensionNameList.names();
 
-      {
-        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-        debugFile << "DxvkAdapter::createDevice: Retrying vkCreateDevice without CUDA interop..." << std::endl;
-      }
+// //       {
+//         std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//         debugFile << "DxvkAdapter::createDevice: Retrying vkCreateDevice without CUDA interop..." << std::endl;
+//       }
       vr = m_vki->vkCreateDevice(m_handle, &info, nullptr, &device);
-      {
-        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-        debugFile << "DxvkAdapter::createDevice: Retry returned " << vr << std::endl;
-      }
+// //       {
+//         std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//         debugFile << "DxvkAdapter::createDevice: Retry returned " << vr << std::endl;
+//       }
     }
 
     if (vr != VK_SUCCESS) {

@@ -153,10 +153,10 @@ namespace dxvk {
 
 
   void STDMETHODCALLTYPE D3D11ImmediateContext::Flush() {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11ImmediateContext::Flush" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11ImmediateContext::Flush" << std::endl;
+//     }
     Flush1(D3D11_CONTEXT_TYPE_ALL, nullptr);
   }
 

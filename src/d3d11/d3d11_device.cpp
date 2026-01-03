@@ -75,10 +75,10 @@ namespace dxvk {
     const D3D11_BUFFER_DESC*      pDesc,
     const D3D11_SUBRESOURCE_DATA* pInitialData,
           ID3D11Buffer**          ppBuffer) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateBuffer" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateBuffer" << std::endl;
+//     }
     InitReturnPtr(ppBuffer);
     
     if (!pDesc)
@@ -97,10 +97,10 @@ namespace dxvk {
       const Com<D3D11Buffer> buffer = new D3D11Buffer(this, &desc);
       m_initializer->InitBuffer(buffer.ptr(), pInitialData);
       *ppBuffer = buffer.ref();
-      {
-        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-        debugFile << "D3D11Device::CreateBuffer Done" << std::endl;
-      }
+// //       {
+//         std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//         debugFile << "D3D11Device::CreateBuffer Done" << std::endl;
+//       }
       return S_OK;
     } catch (const DxvkError& e) {
       Logger::err(e.message());
@@ -156,10 +156,10 @@ namespace dxvk {
     const D3D11_TEXTURE2D_DESC*   pDesc,
     const D3D11_SUBRESOURCE_DATA* pInitialData,
           ID3D11Texture2D**       ppTexture2D) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateTexture2D" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateTexture2D" << std::endl;
+//     }
     InitReturnPtr(ppTexture2D);
 
     if (!pDesc)
@@ -311,10 +311,10 @@ namespace dxvk {
           ID3D11Resource*                   pResource,
     const D3D11_SHADER_RESOURCE_VIEW_DESC*  pDesc,
           ID3D11ShaderResourceView**        ppSRView) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateShaderResourceView" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateShaderResourceView" << std::endl;
+//     }
     InitReturnPtr(ppSRView);
 
     uint32_t plane = GetViewPlaneIndex(pResource, pDesc ? pDesc->Format : DXGI_FORMAT_UNKNOWN);
@@ -392,10 +392,10 @@ namespace dxvk {
           ID3D11Resource*                   pResource,
     const D3D11_UNORDERED_ACCESS_VIEW_DESC* pDesc,
           ID3D11UnorderedAccessView**       ppUAView) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateUnorderedAccessView" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateUnorderedAccessView" << std::endl;
+//     }
     InitReturnPtr(ppUAView);
 
     uint32_t plane = GetViewPlaneIndex(pResource, pDesc ? pDesc->Format : DXGI_FORMAT_UNKNOWN);
@@ -475,10 +475,10 @@ namespace dxvk {
           ID3D11Resource*                   pResource,
     const D3D11_RENDER_TARGET_VIEW_DESC*    pDesc,
           ID3D11RenderTargetView**          ppRTView) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateRenderTargetView" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateRenderTargetView" << std::endl;
+//     }
     InitReturnPtr(ppRTView);
 
     uint32_t plane = GetViewPlaneIndex(pResource, pDesc ? pDesc->Format : DXGI_FORMAT_UNKNOWN);
@@ -562,10 +562,10 @@ namespace dxvk {
           ID3D11Resource*                   pResource,
     const D3D11_DEPTH_STENCIL_VIEW_DESC*    pDesc,
           ID3D11DepthStencilView**          ppDepthStencilView) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateDepthStencilView" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateDepthStencilView" << std::endl;
+//     }
     InitReturnPtr(ppDepthStencilView);
     
     if (pResource == nullptr)
@@ -616,10 +616,10 @@ namespace dxvk {
     const void*                       pShaderBytecodeWithInputSignature,
           SIZE_T                      BytecodeLength,
           ID3D11InputLayout**         ppInputLayout) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateInputLayout" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateInputLayout" << std::endl;
+//     }
     InitReturnPtr(ppInputLayout);
 
     if (pInputElementDescs == nullptr)
@@ -765,10 +765,10 @@ namespace dxvk {
           SIZE_T                      BytecodeLength,
           ID3D11ClassLinkage*         pClassLinkage,
           ID3D11VertexShader**        ppVertexShader) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateVertexShader" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateVertexShader" << std::endl;
+//     }
     InitReturnPtr(ppVertexShader);
     D3D11CommonShader module;
 
@@ -780,10 +780,10 @@ namespace dxvk {
     Sha1Hash hash = Sha1Hash::compute(
       pShaderBytecode, BytecodeLength);
     
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateVertexShader Hash: " << hash.toString() << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateVertexShader Hash: " << hash.toString() << std::endl;
+//     }
 
     HRESULT hr = CreateShaderModule(&module,
       DxvkShaderKey(VK_SHADER_STAGE_VERTEX_BIT, hash),
@@ -936,10 +936,10 @@ namespace dxvk {
           SIZE_T                      BytecodeLength,
           ID3D11ClassLinkage*         pClassLinkage,
           ID3D11PixelShader**         ppPixelShader) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreatePixelShader" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreatePixelShader" << std::endl;
+//     }
     InitReturnPtr(ppPixelShader);
     D3D11CommonShader module;
     
@@ -951,10 +951,10 @@ namespace dxvk {
     Sha1Hash hash = Sha1Hash::compute(
       pShaderBytecode, BytecodeLength);
     
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreatePixelShader Hash: " << hash.toString() << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreatePixelShader Hash: " << hash.toString() << std::endl;
+//     }
 
     HRESULT hr = CreateShaderModule(&module,
       DxvkShaderKey(VK_SHADER_STAGE_FRAGMENT_BIT, hash),
@@ -962,10 +962,10 @@ namespace dxvk {
       &moduleInfo);
 
     if (FAILED(hr)) {
-      {
-        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-        debugFile << "D3D11Device::CreatePixelShader Failed: " << hr << std::endl;
-      }
+// //       {
+//         std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//         debugFile << "D3D11Device::CreatePixelShader Failed: " << hr << std::endl;
+//       }
       return hr;
     }
     
@@ -973,10 +973,10 @@ namespace dxvk {
       return S_FALSE;
     
     *ppPixelShader = ref(new D3D11PixelShader(this, module));
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreatePixelShader Done" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreatePixelShader Done" << std::endl;
+//     }
     return S_OK;
   }
   
@@ -1217,10 +1217,10 @@ namespace dxvk {
   HRESULT STDMETHODCALLTYPE D3D11Device::CreateSamplerState(
     const D3D11_SAMPLER_DESC*         pSamplerDesc,
           ID3D11SamplerState**        ppSamplerState) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateSamplerState" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateSamplerState" << std::endl;
+//     }
     InitReturnPtr(ppSamplerState);
 
     if (pSamplerDesc == nullptr)
@@ -1339,10 +1339,10 @@ namespace dxvk {
   HRESULT STDMETHODCALLTYPE D3D11Device::CreateDeferredContext(
           UINT                        ContextFlags,
           ID3D11DeviceContext**       ppDeferredContext) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateDeferredContext" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateDeferredContext" << std::endl;
+//     }
     *ppDeferredContext = ref(new D3D11DeferredContext(this, m_dxvkDevice, ContextFlags));
     return S_OK;
   }
@@ -1973,44 +1973,44 @@ namespace dxvk {
     const Rc<DxvkInstance>& instance,
     const Rc<DxvkAdapter>&  adapter,
           D3D_FEATURE_LEVEL featureLevel) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "CheckFeatureLevelSupport: Checking " << featureLevel << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "CheckFeatureLevelSupport: Checking " << featureLevel << std::endl;
+//     }
 
     if (featureLevel > GetMaxFeatureLevel(instance)) {
-      {
-        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-        debugFile << "CheckFeatureLevelSupport: Feature level too high" << std::endl;
-      }
+// //       {
+//         std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//         debugFile << "CheckFeatureLevelSupport: Feature level too high" << std::endl;
+//       }
       return false;
     }
     
     // Check whether all features are supported
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "CheckFeatureLevelSupport: Getting device features..." << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "CheckFeatureLevelSupport: Getting device features..." << std::endl;
+//     }
     const DxvkDeviceFeatures features
       = GetDeviceFeatures(adapter, featureLevel);
     
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "CheckFeatureLevelSupport: Checking feature support in adapter..." << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "CheckFeatureLevelSupport: Checking feature support in adapter..." << std::endl;
+//     }
     if (!adapter->checkFeatureSupport(features)) {
-      {
-        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-        debugFile << "CheckFeatureLevelSupport: Adapter does not support features" << std::endl;
-      }
+// //       {
+//         std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//         debugFile << "CheckFeatureLevelSupport: Adapter does not support features" << std::endl;
+//       }
       return false;
     }
     
     // TODO also check for required limits
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "CheckFeatureLevelSupport: Supported!" << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "CheckFeatureLevelSupport: Supported!" << std::endl;
+//     }
     return true;
   }
   
@@ -2113,19 +2113,19 @@ namespace dxvk {
 
     D3D11CommonShader commonShader;
 
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateShaderModule: Calling GetShaderModule..." << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateShaderModule: Calling GetShaderModule..." << std::endl;
+//     }
 
     HRESULT hr = m_shaderModules.GetShaderModule(this,
       &ShaderKey, pModuleInfo, pShaderBytecode, BytecodeLength,
       &commonShader);
 
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11Device::CreateShaderModule: GetShaderModule returned " << hr << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11Device::CreateShaderModule: GetShaderModule returned " << hr << std::endl;
+//     }
 
     if (FAILED(hr))
       return hr;
@@ -3534,22 +3534,22 @@ namespace dxvk {
 
 
   Rc<DxvkDevice> D3D11DXGIDevice::CreateDevice(D3D_FEATURE_LEVEL FeatureLevel) {
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11DXGIDevice::CreateDevice: Getting device features..." << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11DXGIDevice::CreateDevice: Getting device features..." << std::endl;
+//     }
     DxvkDeviceFeatures deviceFeatures = D3D11Device::GetDeviceFeatures(m_dxvkAdapter, FeatureLevel);
     
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11DXGIDevice::CreateDevice: Creating Vulkan device..." << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11DXGIDevice::CreateDevice: Creating Vulkan device..." << std::endl;
+//     }
     auto device = m_dxvkAdapter->createDevice(m_dxvkInstance, deviceFeatures);
     
-    {
-      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
-      debugFile << "D3D11DXGIDevice::CreateDevice: Vulkan device created." << std::endl;
-    }
+// //     {
+//       std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+//       debugFile << "D3D11DXGIDevice::CreateDevice: Vulkan device created." << std::endl;
+//     }
     return device;
   }
 
