@@ -3,6 +3,7 @@
 #include "d3d11_device.h"
 #include "d3d11_texture.h"
 #include "../dxvk/rtx_render/rtx_context.h"
+#include <fstream>
 
 constexpr static uint32_t MinFlushIntervalUs = 750;
 constexpr static uint32_t IncFlushIntervalUs = 250;
@@ -152,6 +153,10 @@ namespace dxvk {
 
 
   void STDMETHODCALLTYPE D3D11ImmediateContext::Flush() {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11ImmediateContext::Flush" << std::endl;
+    }
     Flush1(D3D11_CONTEXT_TYPE_ALL, nullptr);
   }
 

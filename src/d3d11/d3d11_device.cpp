@@ -75,6 +75,10 @@ namespace dxvk {
     const D3D11_BUFFER_DESC*      pDesc,
     const D3D11_SUBRESOURCE_DATA* pInitialData,
           ID3D11Buffer**          ppBuffer) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateBuffer" << std::endl;
+    }
     InitReturnPtr(ppBuffer);
     
     if (!pDesc)
@@ -148,6 +152,10 @@ namespace dxvk {
     const D3D11_TEXTURE2D_DESC*   pDesc,
     const D3D11_SUBRESOURCE_DATA* pInitialData,
           ID3D11Texture2D**       ppTexture2D) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateTexture2D" << std::endl;
+    }
     InitReturnPtr(ppTexture2D);
 
     if (!pDesc)
@@ -1277,6 +1285,10 @@ namespace dxvk {
   HRESULT STDMETHODCALLTYPE D3D11Device::CreateDeferredContext(
           UINT                        ContextFlags,
           ID3D11DeviceContext**       ppDeferredContext) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateDeferredContext" << std::endl;
+    }
     *ppDeferredContext = ref(new D3D11DeferredContext(this, m_dxvkDevice, ContextFlags));
     return S_OK;
   }
@@ -3115,11 +3127,12 @@ namespace dxvk {
     const Rc<DxvkInstance>&   pDxvkInstance,
     const Rc<DxvkAdapter>&    pDxvkAdapter,
           D3D_FEATURE_LEVEL   FeatureLevel,
-          UINT                FeatureFlags)
+          UINT                FeatureFlags,
+    const Rc<DxvkDevice>&     pDxvkDevice)
   : m_dxgiAdapter   (pAdapter),
     m_dxvkInstance  (pDxvkInstance),
     m_dxvkAdapter   (pDxvkAdapter),
-    m_dxvkDevice    (CreateDevice(FeatureLevel)),
+    m_dxvkDevice    (pDxvkDevice != nullptr ? pDxvkDevice : CreateDevice(FeatureLevel)),
     m_d3d11Device   (this, FeatureLevel, FeatureFlags),
     m_d3d11DeviceExt(this, &m_d3d11Device),
     m_d3d11Interop  (this, &m_d3d11Device),

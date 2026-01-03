@@ -771,7 +771,8 @@ namespace dxvk {
       const Rc<DxvkInstance>&   pDxvkInstance,
       const Rc<DxvkAdapter>&    pDxvkAdapter,
             D3D_FEATURE_LEVEL   FeatureLevel,
-            UINT                FeatureFlags);
+            UINT                FeatureFlags,
+      const Rc<DxvkDevice>&     pDxvkDevice = nullptr);
     
     ~D3D11DXGIDevice();
     

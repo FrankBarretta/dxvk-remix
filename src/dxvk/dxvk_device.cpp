@@ -31,6 +31,7 @@
 #include "rtx_render/rtx_composite.h"
 #include "rtx_render/rtx_debug_view.h"
 #include "rtx_render/rtx_xess.h"
+#include <fstream>
 
 
 namespace dxvk {
@@ -130,6 +131,10 @@ namespace dxvk {
   
   
   DxvkDevice::~DxvkDevice() {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "DxvkDevice::~DxvkDevice: Destroying device..." << std::endl;
+    }
     // Wait for all pending Vulkan commands to be
     // executed before we destroy any resources.
     this->waitForIdle();

@@ -208,17 +208,59 @@ extern "C" {
         debugFile << "Creating D3D11DXGIDevice with feature level " << fl << std::endl;
       }
 
-      Com<D3D11DXGIDevice> device = new D3D11DXGIDevice(
-        pAdapter, dxvkInstance, dxvkAdapter, fl, Flags);
+      // Static weak pointer to store the last created device
+      static DxvkDevice* s_lastDxvkDevice = nullptr;
+      Rc<DxvkDevice> sharedDevice = nullptr;
+
+      // Check if we can reuse the device
+      if (s_lastDxvkDevice != nullptr) {
+         // We can't easily check if it's valid via raw pointer, but we can try to ref it if we had a weak_ptr.
+         // However, DxvkDevice is ref counted.
+         // Let's assume for this hack that if s_lastDxvkDevice is set, we try to use it.
+         // BUT, we need a proper Rc<>.
+         // Since we don't have a global Rc<>, we can't safely resurrect it if refcount went to 0.
+         // So we should keep a global Rc<> to keep it alive?
+         // If we keep it alive, it never gets destroyed. This might be what we want for the game session.
+      }
       
+      static Rc<DxvkDevice> s_keepAliveDevice = nullptr;
+      
+      if (s_keepAliveDevice != nullptr) {
+          Logger::info("D3D11CoreCreateDevice: Reusing existing DxvkDevice");
+          {
+            std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+            debugFile << "Reusing existing DxvkDevice" << std::endl;
+          }
+          sharedDevice = s_keepAliveDevice;
+      }
+
+      Com<D3D11DXGIDevice> device = new D3D11DXGIDevice(
+        pAdapter, dxvkInstance, dxvkAdapter, fl, Flags, sharedDevice);
+      
+      if (s_keepAliveDevice == nullptr) {
+          s_keepAliveDevice = device->GetDXVKDevice();
+          Logger::info("D3D11CoreCreateDevice: Stored DxvkDevice for reuse");
+          {
+            std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+            debugFile << "Stored DxvkDevice for reuse" << std::endl;
+          }
+      }
+
       {
         std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
         debugFile << "D3D11DXGIDevice created. Querying interface..." << std::endl;
       }
 
-      return device->QueryInterface(
+      HRESULT hr = device->QueryInterface(
         __uuidof(ID3D11Device),
         reinterpret_cast<void**>(ppDevice));
+
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "Exit: D3D11CoreCreateDevice (Result: " << hr << ")" << std::endl;
+      }
+      
+      return hr;
     } catch (const DxvkError& e) {
       Logger::err("D3D11CoreCreateDevice: Failed to create D3D11 device");
       {
