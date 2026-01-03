@@ -1,4 +1,5 @@
 #include <cstring>
+#include <fstream>
 
 #include "d3d11_device.h"
 #include "d3d11_initializer.h"
@@ -30,11 +31,20 @@ namespace dxvk {
   void D3D11Initializer::InitBuffer(
           D3D11Buffer*                pBuffer,
     const D3D11_SUBRESOURCE_DATA*     pInitialData) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Initializer::InitBuffer" << std::endl;
+    }
     VkMemoryPropertyFlags memFlags = pBuffer->GetBuffer()->memFlags();
 
     (memFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
       ? InitHostVisibleBuffer(pBuffer, pInitialData)
       : InitDeviceLocalBuffer(pBuffer, pInitialData);
+      
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Initializer::InitBuffer Done" << std::endl;
+    }
   }
   
 

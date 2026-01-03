@@ -97,6 +97,10 @@ namespace dxvk {
       const Com<D3D11Buffer> buffer = new D3D11Buffer(this, &desc);
       m_initializer->InitBuffer(buffer.ptr(), pInitialData);
       *ppBuffer = buffer.ref();
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "D3D11Device::CreateBuffer Done" << std::endl;
+      }
       return S_OK;
     } catch (const DxvkError& e) {
       Logger::err(e.message());
@@ -307,6 +311,10 @@ namespace dxvk {
           ID3D11Resource*                   pResource,
     const D3D11_SHADER_RESOURCE_VIEW_DESC*  pDesc,
           ID3D11ShaderResourceView**        ppSRView) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateShaderResourceView" << std::endl;
+    }
     InitReturnPtr(ppSRView);
 
     uint32_t plane = GetViewPlaneIndex(pResource, pDesc ? pDesc->Format : DXGI_FORMAT_UNKNOWN);
@@ -384,6 +392,10 @@ namespace dxvk {
           ID3D11Resource*                   pResource,
     const D3D11_UNORDERED_ACCESS_VIEW_DESC* pDesc,
           ID3D11UnorderedAccessView**       ppUAView) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateUnorderedAccessView" << std::endl;
+    }
     InitReturnPtr(ppUAView);
 
     uint32_t plane = GetViewPlaneIndex(pResource, pDesc ? pDesc->Format : DXGI_FORMAT_UNKNOWN);
@@ -463,6 +475,10 @@ namespace dxvk {
           ID3D11Resource*                   pResource,
     const D3D11_RENDER_TARGET_VIEW_DESC*    pDesc,
           ID3D11RenderTargetView**          ppRTView) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateRenderTargetView" << std::endl;
+    }
     InitReturnPtr(ppRTView);
 
     uint32_t plane = GetViewPlaneIndex(pResource, pDesc ? pDesc->Format : DXGI_FORMAT_UNKNOWN);
@@ -546,6 +562,10 @@ namespace dxvk {
           ID3D11Resource*                   pResource,
     const D3D11_DEPTH_STENCIL_VIEW_DESC*    pDesc,
           ID3D11DepthStencilView**          ppDepthStencilView) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateDepthStencilView" << std::endl;
+    }
     InitReturnPtr(ppDepthStencilView);
     
     if (pResource == nullptr)
@@ -596,6 +616,10 @@ namespace dxvk {
     const void*                       pShaderBytecodeWithInputSignature,
           SIZE_T                      BytecodeLength,
           ID3D11InputLayout**         ppInputLayout) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateInputLayout" << std::endl;
+    }
     InitReturnPtr(ppInputLayout);
 
     if (pInputElementDescs == nullptr)
@@ -741,6 +765,10 @@ namespace dxvk {
           SIZE_T                      BytecodeLength,
           ID3D11ClassLinkage*         pClassLinkage,
           ID3D11VertexShader**        ppVertexShader) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateVertexShader" << std::endl;
+    }
     InitReturnPtr(ppVertexShader);
     D3D11CommonShader module;
 
@@ -752,6 +780,11 @@ namespace dxvk {
     Sha1Hash hash = Sha1Hash::compute(
       pShaderBytecode, BytecodeLength);
     
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateVertexShader Hash: " << hash.toString() << std::endl;
+    }
+
     HRESULT hr = CreateShaderModule(&module,
       DxvkShaderKey(VK_SHADER_STAGE_VERTEX_BIT, hash),
       pShaderBytecode, BytecodeLength, pClassLinkage,
@@ -903,6 +936,10 @@ namespace dxvk {
           SIZE_T                      BytecodeLength,
           ID3D11ClassLinkage*         pClassLinkage,
           ID3D11PixelShader**         ppPixelShader) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreatePixelShader" << std::endl;
+    }
     InitReturnPtr(ppPixelShader);
     D3D11CommonShader module;
     
@@ -914,19 +951,32 @@ namespace dxvk {
     Sha1Hash hash = Sha1Hash::compute(
       pShaderBytecode, BytecodeLength);
     
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreatePixelShader Hash: " << hash.toString() << std::endl;
+    }
 
     HRESULT hr = CreateShaderModule(&module,
       DxvkShaderKey(VK_SHADER_STAGE_FRAGMENT_BIT, hash),
       pShaderBytecode, BytecodeLength, pClassLinkage,
       &moduleInfo);
 
-    if (FAILED(hr))
+    if (FAILED(hr)) {
+      {
+        std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+        debugFile << "D3D11Device::CreatePixelShader Failed: " << hr << std::endl;
+      }
       return hr;
+    }
     
     if (!ppPixelShader)
       return S_FALSE;
     
     *ppPixelShader = ref(new D3D11PixelShader(this, module));
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreatePixelShader Done" << std::endl;
+    }
     return S_OK;
   }
   
@@ -1167,6 +1217,10 @@ namespace dxvk {
   HRESULT STDMETHODCALLTYPE D3D11Device::CreateSamplerState(
     const D3D11_SAMPLER_DESC*         pSamplerDesc,
           ID3D11SamplerState**        ppSamplerState) {
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateSamplerState" << std::endl;
+    }
     InitReturnPtr(ppSamplerState);
 
     if (pSamplerDesc == nullptr)
@@ -2059,9 +2113,19 @@ namespace dxvk {
 
     D3D11CommonShader commonShader;
 
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateShaderModule: Calling GetShaderModule..." << std::endl;
+    }
+
     HRESULT hr = m_shaderModules.GetShaderModule(this,
       &ShaderKey, pModuleInfo, pShaderBytecode, BytecodeLength,
       &commonShader);
+
+    {
+      std::ofstream debugFile("d3d11_debug.txt", std::ios::app);
+      debugFile << "D3D11Device::CreateShaderModule: GetShaderModule returned " << hr << std::endl;
+    }
 
     if (FAILED(hr))
       return hr;
